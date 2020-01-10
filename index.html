@@ -35,6 +35,53 @@
         var paddleY = canvas.height - paddleHeight;
         var intervalId = 0;
 
+        var rows = 3;
+        var columns = 4;
+        var brickTotalHeight = canvas.height / 3 ;
+        var score = 0;
+
+        var brickWidth = 75;
+        var brickHeight = 20;
+        var brickOffsetWidth = (canvas.width - ( columns * brickWidth )) /(columns + 1) ;
+        var brickOffsetHeight = (brickTotalHeight - ( rows * brickHeight)) / (rows + 1) ;
+        var bricks = [];
+        function drawBricks(){
+            for(var i = 0; i <= rows ; i++){
+                bricks[i] = [];
+                for(var j = 0; j <= columns ; j++){
+                    bricks[i][j] = {
+                        x : (i * brickWidth) + ((i+1) * brickOffsetWidth),
+                        y : (j * brickHeight) + ((j+1) * brickOffsetHeight)
+                    }
+                    drawBrick( bricks[i][j].x , bricks[i][j].y);
+                }                
+            } 
+        }
+
+        function drawBrick(brickX , brickY ){
+            ctx.beginPath();
+            ctx.rect(brickX, brickY , brickWidth , brickHeight);
+            ctx.fillStyle = "blue";
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function collisionDetection(){
+            for(var i = 0; i <= rows ; i++ ){
+                for(var j = 0; j <= columns ; j++){
+                    if(x > bricks[i][j].x && x < bricks[i][j].x + brickWidth && y > bricks[i][j].y && y < bricks[i][j].y){
+                        bricks[i] = bricks[i].remove(j);
+                        dy = -dy;
+                        score += 1;
+                        console.log('score', score);
+                    }
+                }
+            }
+        }
+        
+
+
+
         function drawBall() {
             ctx.beginPath();
             ctx.arc(x, y, ballRadius, 0, Math.PI * 2, false);
@@ -51,13 +98,16 @@
             ctx.closePath();
         }
 
+        
 
-
+        
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBall();
             drawPaddle();
+            drawBricks();
+            collisionDetection();
             x += dx;
             y += dy;
 
@@ -98,16 +148,7 @@
             }
         }
 
-        // function OnKeyUp(e) {
-        //     if (e.code == "ArrowRight" || e.code == "right") {
-
-        //     }
-
-        //     if (e.code == "ArrowLeft" || e.code == "left") {
-
-        //     }
-
-        // }
+        
 
         intervalId = setInterval(draw, 20);
     </script>
